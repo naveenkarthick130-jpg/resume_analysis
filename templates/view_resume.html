@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Resume Analysis</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Resume Analysis</h1>
+
+        <p>
+            Previous Resume Analysis
+        </p>
+
+    </div>
+
+
+    <!-- Score -->
+
+    <div class="score-card">
+
+        <h2>Resume Score</h2>
+
+        <div class="score">
+
+            {{ resume.score }}/100
+
+        </div>
+
+    </div>
+
+
+    <!-- ATS -->
+
+    <div class="score-card">
+
+        <h2>ATS Score</h2>
+
+        <div class="score">
+
+            {{ resume.ats_score }}/100
+
+        </div>
+
+    </div>
+
+
+    <!-- Personal Information -->
+
+    <div class="card">
+
+        <h2>Personal Information</h2>
+
+        <p>
+            <b>Name:</b>
+            {{ resume.name }}
+        </p>
+
+        <p>
+            <b>Email:</b>
+            {{ resume.email }}
+        </p>
+
+        <p>
+            <b>Phone:</b>
+            {{ resume.phone }}
+        </p>
+
+    </div>
+
+
+    <!-- Skills -->
+
+    <div class="card">
+
+        <h2>Skills</h2>
+
+        {% for skill in resume.skills.split(',') %}
+
+            <span class="skill">
+                {{ skill }}
+            </span>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Education -->
+
+    <div class="card">
+
+        <h2>Education</h2>
+
+        <p>
+            {{ resume.education }}
+        </p>
+
+    </div>
+
+
+    <!-- Experience -->
+
+    <div class="card">
+
+        <h2>Experience</h2>
+
+        <p>
+            {{ resume.experience }}
+        </p>
+
+    </div>
+
+
+    <!-- Projects -->
+
+    <div class="card">
+
+        <h2>Projects</h2>
+
+        <p>
+            {{ resume.projects }}
+        </p>
+
+    </div>
+
+
+    <!-- Certifications -->
+
+    <div class="card">
+
+        <h2>Certifications</h2>
+
+        <p>
+            {{ resume.certifications }}
+        </p>
+
+    </div>
+
+
+    <br>
+
+    <a href="/history" class="back-button">
+        ← Back to History
+    </a>
+
+    <a href="/" class="back-button">
+        Upload New Resume
+    </a>
+
+</div>
+
+</body>
+
+</html>

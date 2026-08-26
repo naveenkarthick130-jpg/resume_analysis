@@ -1,0 +1,5 @@
+Flask
+PyPDF2
+mysql-connector-python
+python-dotenv
+scikit-learn

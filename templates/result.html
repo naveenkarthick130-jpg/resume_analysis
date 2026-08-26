@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>AI Resume Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <!-- Header -->
+
+    <div class="header">
+
+        <h1>AI Resume Analyzer</h1>
+
+        <p>
+            Automated Resume Analysis & Job Recommendation
+        </p>
+
+    </div>
+
+
+    <!-- Resume Score -->
+
+    <div class="score-card">
+
+        <h2>Resume Score</h2>
+
+        <div class="score">
+            {{ score }}/100
+        </div>
+
+        <div class="progress">
+
+            <div
+                class="progress-bar"
+                style="width: {{ score }}%;"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Personal + Skills -->
+
+    <div class="grid">
+
+
+        <div class="card">
+
+            <h2>Personal Information</h2>
+
+            <p>
+                <b>Name:</b> {{ name }}
+            </p>
+
+            <p>
+                <b>Email:</b> {{ email }}
+            </p>
+
+            <p>
+                <b>Phone:</b> {{ phone }}
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h2>Skills</h2>
+
+            {% for skill in skills %}
+
+                <span class="skill">
+                    {{ skill }}
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+
+    </div>
+
+
+    <!-- Education -->
+
+    <div class="card">
+
+        <h2>Education</h2>
+
+        {% for item in education %}
+
+            <p>🎓 {{ item }}</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Experience -->
+
+    <div class="card">
+
+        <h2>Experience</h2>
+
+        {% for item in experience %}
+
+            <p>💼 {{ item }}</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Projects -->
+
+    <div class="card">
+
+        <h2>Projects</h2>
+
+        {% for project in projects %}
+
+            <p>📌 {{ project }}</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Certifications -->
+
+    <div class="card">
+
+        <h2>Certifications</h2>
+
+        {% for certification in certifications %}
+
+            <p>🏆 {{ certification }}</p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Score Breakdown -->
+
+    <div class="card">
+
+        <h2>Score Breakdown</h2>
+
+        {% for category, points in score_breakdown.items() %}
+
+            <p>
+
+                <b>{{ category }}</b>
+
+                — {{ points }} points
+
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Suggestions -->
+
+    <div class="card">
+
+        <h2>Resume Improvement Suggestions</h2>
+
+        {% for suggestion in suggestions %}
+
+            <div class="suggestion">
+
+                💡 {{ suggestion }}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Job Recommendations -->
+
+    <div class="card">
+
+        <h2>Recommended Jobs</h2>
+
+        {% for job in job_results %}
+
+            <div class="job">
+
+                <h3>
+                    {{ job.job_role }}
+                </h3>
+
+                <div class="match">
+
+                    {{ job.match_percentage }}%
+
+                </div>
+
+                <p>
+                    Job Match
+                </p>
+
+
+                <p>
+                    <b>Matched Skills:</b>
+                </p>
+
+                {% for skill in job.matched_skills %}
+
+                    <span class="skill">
+                        ✅ {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+
+                <p>
+                    <b>Missing Skills:</b>
+                </p>
+
+                {% for skill in job.missing_skills %}
+
+                    <span class="skill">
+                        ❌ {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Resume Text -->
+
+    <div class="card">
+
+        <h2>Extracted Resume Text</h2>
+
+        <textarea
+            rows="20"
+            readonly
+        >{{ resume_text }}</textarea>
+
+    </div>
+    <br><br>
+    <!-- ATS Analysis -->
+
+<div class="card">
+
+    <h2>ATS Analysis</h2>
+
+    <h1>
+        ATS Score: {{ ats_result.score }}/100
+    </h1>
+
+    <hr>
+
+    <h3>ATS Checks</h3>
+
+    {% for check in ats_result.checks %}
+
+        <p>
+            <b>{{ check.name }}</b>
+            :
+            {{ check.status }}
+        </p>
+
+        <p>
+            {{ check.message }}
+        </p>
+
+    {% endfor %}
+
+
+    <hr>
+
+
+    <h3>Keywords Found</h3>
+
+    {% for keyword in ats_result.found_keywords %}
+
+        <span class="skill">
+            {{ keyword }}
+        </span>
+
+    {% endfor %}</div>
+
+    <br> <br>
+<!-- Skill Gap Analysis -->
+
+<div class="card">
+
+    <h2>Skill Gap Analysis</h2>
+
+    {% for item in skill_gap %}
+
+        <div class="job">
+
+            <h3>{{ item.job }}</h3>
+
+            <p>
+                <b>Skills You Have:</b>
+            </p>
+
+            {% if item.matched %}
+
+                {% for skill in item.matched %}
+
+                    <span class="skill">
+                        ✅ {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>No matching skills.</p>
+
+            {% endif %}
+
+
+            <p>
+                <b>Skills You Should Learn:</b>
+            </p>
+
+            {% if item.missing %}
+
+                {% for skill in item.missing %}
+
+                    <span class="skill">
+                        📚 {{ skill }}
+                    </span>
+
+                {% endfor %}
+
+            {% else %}
+
+                <p>🎉 No major skill gaps.</p>
+
+            {% endif %}
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+
+
+    <a
+        href="/"
+        class="back-button"
+    >
+        Upload Another Resume
+    </a>
+
+
+</div>
+<br> <br>
+<div class="card">
+
+    <h2>💡 Resume Improvement Suggestions</h2>
+
+    {% if suggestions %}
+
+        <ul>
+
+            {% for suggestion in suggestions %}
+
+                <li>
+                    {{ suggestion }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            🎉 Your resume looks strong!
+        </p>
+
+    {% endif %}
+
+</div><div class="card">
+
+    <h2>💡 Resume Improvement Suggestions</h2>
+
+    {% if suggestions %}
+
+        <ul>
+
+            {% for suggestion in suggestions %}
+
+                <li>
+                    {{ suggestion }}
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            🎉 Your resume looks strong!
+        </p>
+
+    {% endif %}
+
+</div>
+</body>
+
+</html>

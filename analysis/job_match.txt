@@ -1,0 +1,84 @@
+JOB_ROLES = {
+
+    "Python Developer": [
+        "Python",
+        "SQL",
+        "Flask",
+        "Django",
+        "Git",
+        "GitHub",
+        "Docker"
+    ],
+
+    "Data Analyst": [
+        "Python",
+        "SQL",
+        "Power BI",
+        "Tableau",
+        "Excel"
+    ],
+
+    "Java Developer": [
+        "Java",
+        "SQL",
+        "Spring",
+        "Git",
+        "MySQL"
+    ],
+
+    "Machine Learning Engineer": [
+        "Python",
+        "Machine Learning",
+        "Deep Learning",
+        "SQL",
+        "Git"
+    ],
+
+    "Frontend Developer": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React",
+        "Git"
+    ]
+}
+
+
+def analyze_jobs(resume_skills):
+
+    results = []
+
+    resume_skills_lower = [
+        skill.lower()
+        for skill in resume_skills
+    ]
+
+    for job_role, required_skills in JOB_ROLES.items():
+
+        matched = []
+        missing = []
+
+        for skill in required_skills:
+
+            if skill.lower() in resume_skills_lower:
+                matched.append(skill)
+            else:
+                missing.append(skill)
+
+        percentage = (
+            len(matched) / len(required_skills)
+        ) * 100
+
+        results.append({
+            "job_role": job_role,
+            "match_percentage": round(percentage),
+            "matched_skills": matched,
+            "missing_skills": missing
+        })
+
+    results.sort(
+        key=lambda x: x["match_percentage"],
+        reverse=True
+    )
+
+    return results

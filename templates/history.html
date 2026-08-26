@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Resume History</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>Resume Analysis History</h1>
+
+        <p>Previously analyzed resumes</p>
+
+    </div>
+
+
+    {% if resumes %}
+
+        {% for resume in resumes %}
+
+            <div class="card">
+
+                <h2>
+    <a href="/resume/{{ resume.id }}">
+        {{ resume.name }}
+    </a>
+</h2>
+<p>
+    <a
+        href="/resume/{{ resume.id }}"
+        class="back-button"
+    >
+        View Full Analysis
+    </a>
+</p>
+
+                <p>
+                    <b>Email:</b>
+                    {{ resume.email }}
+                </p>
+
+                <p>
+                    <b>Phone:</b>
+                    {{ resume.phone }}
+                </p>
+
+                <p>
+                    <b>Resume Score:</b>
+                    {{ resume.score }}/100
+                </p>
+
+                <p>
+                    <b>ATS Score:</b>
+                    {{ resume.ats_score }}/100
+                </p>
+
+                <p>
+                    <b>Date:</b>
+                    {{ resume.created_at }}
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="card">
+
+            <h2>No Resume History</h2>
+
+            <p>
+                Upload a resume to create your first analysis.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+
+    <a href="/" class="back-button">
+        Upload New Resume
+    </a>
+
+</div>
+
+</body>
+
+</html>
