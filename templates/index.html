@@ -1,27 +1,567 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resume Analyzer</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #F5F6F8;
+            --surface: #FFFFFF;
+            --border: #E4E7EC;
+            --ink: #14181F;
+            --muted: #6B7280;
+            --accent: #2F6FED;
+            --accent-bg: #EAF1FF;
+
+            --success: #16A34A;
+            --success-bg: #E7F7EC;
+            --warn: #C98A0A;
+            --warn-bg: #FFF6E1;
+            --danger: #D8412F;
+            --danger-bg: #FDEBE9;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+
+        a { color: inherit; }
+
+        .wrap {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---- Nav ---- */
+        nav.topbar {
+            padding: 22px 0;
+        }
+
+        .topbar-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 17px;
+            text-decoration: none;
+        }
+
+        .brand-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 9px;
+            background: var(--ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--muted);
+            padding: 9px 14px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            transition: color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .history-link:hover { color: var(--ink); border-color: #C9CDD6; }
+        .history-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+        /* ---- Hero ---- */
+        .hero {
+            padding: 48px 0 72px;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 56px;
+            align-items: center;
+        }
+
+        @media (max-width: 860px) {
+            .hero { grid-template-columns: 1fr; padding: 24px 0 48px; gap: 40px; }
+        }
+
+        .eyebrow {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin: 0 0 14px;
+        }
+
+        h1.headline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: clamp(30px, 4.4vw, 44px);
+            line-height: 1.15;
+            margin: 0 0 16px;
+            letter-spacing: -0.01em;
+        }
+
+        .headline em {
+            font-style: normal;
+            color: var(--accent);
+        }
+
+        .subcopy {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--muted);
+            margin: 0 0 32px;
+            max-width: 46ch;
+        }
+
+        /* ---- Upload card ---- */
+        .upload-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 1px 2px rgba(20, 24, 31, 0.03);
+        }
+
+        .upload-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 18px;
+        }
+
+        .dropzone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 10px;
+            padding: 34px 20px;
+            border: 1.5px dashed #C9CDD6;
+            border-radius: 14px;
+            cursor: pointer;
+            background: var(--bg);
+            transition: border-color 0.15s ease, background 0.15s ease;
+        }
+
+        .dropzone:hover { border-color: var(--accent); background: var(--accent-bg); }
+        .dropzone.is-dragover { border-color: var(--accent); background: var(--accent-bg); }
+        .dropzone.has-file { border-style: solid; border-color: var(--success); background: var(--success-bg); }
+
+        .dropzone-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--accent-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+        }
+
+        .dropzone.has-file .dropzone-icon { background: #D6F0DE; }
+
+        .dropzone-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .dropzone-sub {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .dropzone-filename {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0F6B30;
+            word-break: break-all;
+        }
+
+        .visually-hidden-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+
+        .visually-hidden-input:focus-visible ~ .dropzone-title {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            margin-top: 18px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #fff;
+            background: var(--ink);
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: background 0.15s ease, transform 0.15s ease;
+        }
+
+        .submit-btn:hover { background: #262B35; transform: translateY(-1px); }
+        .submit-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+        .form-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 12px;
+        }
+
+        /* ---- Preview mock (visual echo of the result page) ---- */
+        .preview {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+        }
+
+        .preview-caption {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-align: center;
+            margin: 0 0 18px;
+        }
+
+        .mock-gauge-wrap {
+            position: relative;
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 14px;
+        }
+
+        .mock-gauge-wrap svg { transform: rotate(-90deg); }
+
+        .mock-track { fill: none; stroke: var(--border); stroke-width: 10; }
+        .mock-fill {
+            fill: none;
+            stroke: var(--success);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 314;
+            stroke-dashoffset: 314;
+            animation: fillMock 1.2s 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes fillMock { to { stroke-dashoffset: 57; } }
+
+        .mock-gauge-label {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mock-gauge-number {
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 600;
+            font-size: 24px;
+        }
+
+        .mock-gauge-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .mock-verdict {
+            display: block;
+            text-align: center;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--success);
+            background: var(--success-bg);
+            width: fit-content;
+            margin: 0 auto 20px;
+            padding: 5px 12px;
+            border-radius: 999px;
+        }
+
+        .mock-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            justify-content: center;
+        }
+
+        .chip {
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 11px;
+            border-radius: 999px;
+        }
+
+        .chip.ok { background: var(--success-bg); color: #0F6B30; }
+        .chip.no { background: var(--danger-bg); color: #A82E1F; }
+
+        /* ---- How it works ---- */
+        .how {
+            padding: 8px 0 64px;
+        }
+
+        .how h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 32px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 720px) {
+            .steps { grid-template-columns: 1fr; }
+        }
+
+        .step {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px;
+        }
+
+        .step-num {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .step h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 15px;
+            margin: 0 0 6px;
+        }
+
+        .step p {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 22px 0;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            .mock-fill { animation: none; stroke-dashoffset: 57; }
+            .submit-btn, .history-link, .dropzone { transition: none; }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>AI Resume Analyzer</h1>
+    <nav class="topbar">
+        <div class="wrap topbar-inner">
+            <a class="brand" href="/">
+                <span class="brand-mark">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                        <path d="M3 8.5L6 11.5L13 4" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                Resume Analyzer
+            </a>
+            <a href="/history" class="history-link">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6.2" stroke="currentColor" stroke-width="1.4"/>
+                    <path d="M8 4.8V8L10.2 9.4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                View Resume History
+            </a>
+        </div>
+    </nav>
 
-    <form action="/upload" method="POST" enctype="multipart/form-data">
+    <header class="wrap hero">
+        <div>
+            <p class="eyebrow">AI-Powered Resume Analysis</p>
+            <h1 class="headline">Know exactly how you <em>match</em> — before you apply.</h1>
+            <p class="subcopy">
+                Upload your resume as a PDF and get an instant, skill-by-skill breakdown of how well it fits the role — plus exactly what's missing.
+            </p>
 
-        <label>Select your resume:</label>
+            <div class="upload-card">
+                <h2>Analyze your resume</h2>
 
-        <input type="file" name="resume" accept=".pdf" required>
+                <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
 
-        <button type="submit">Analyze Resume</button>
+                    <label class="dropzone" id="dropzone" for="resumeInput">
+                        <span class="dropzone-icon">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <path d="M10 13V3M10 3L6.5 6.5M10 3L13.5 6.5" stroke="#2F6FED" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3.5 13.5V15.2C3.5 15.9 4.1 16.5 4.8 16.5H15.2C15.9 16.5 16.5 15.9 16.5 15.2V13.5" stroke="#2F6FED" stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                        <span class="dropzone-title" id="dropzoneTitle">Drag &amp; drop your resume here</span>
+                        <span class="dropzone-sub" id="dropzoneSub">or click to browse &middot; PDF only</span>
+                        <span class="dropzone-filename" id="fileName"></span>
 
-    </form>
-    <br> <br> <br> <br>
-    <a href="/history" class="back-button">
-    View Resume History
-</a>
+                        <input
+                            type="file"
+                            id="resumeInput"
+                            name="resume"
+                            accept=".pdf"
+                            required
+                            class="visually-hidden-input">
+                    </label>
 
+                    <button type="submit" class="submit-btn">Analyze Resume</button>
+                    <p class="form-note">Your resume is only used to generate this match report.</p>
+                </form>
+            </div>
+        </div>
+
+        <div class="preview" aria-hidden="true">
+            <p class="preview-caption">Example report</p>
+
+            <div class="mock-gauge-wrap">
+                <svg viewBox="0 0 120 120" width="128" height="128">
+                    <circle class="mock-track" cx="60" cy="60" r="50"></circle>
+                    <circle class="mock-fill" cx="60" cy="60" r="50"></circle>
+                </svg>
+                <div class="mock-gauge-label">
+                    <span class="mock-gauge-number">82%</span>
+                    <span class="mock-gauge-sub">Match Score</span>
+                </div>
+            </div>
+
+            <span class="mock-verdict">Strong Match</span>
+
+            <div class="mock-chips">
+                <span class="chip ok">Python</span>
+                <span class="chip ok">React</span>
+                <span class="chip ok">SQL</span>
+                <span class="chip no">Docker</span>
+                <span class="chip no">AWS</span>
+            </div>
+        </div>
+    </header>
+
+    <section class="wrap how">
+        <h2>How it works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">01</div>
+                <h3>Upload</h3>
+                <p>Drop in your resume as a PDF — no sign-up needed.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">02</div>
+                <h3>Analyze</h3>
+                <p>The analyzer compares your resume against the role's requirements.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">03</div>
+                <h3>Get your score</h3>
+                <p>See a full breakdown of matched and missing skills, instantly.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        AI Resume Analyzer &middot; built to help you apply with confidence
+    </footer>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('resumeInput');
+        const fileNameEl = document.getElementById('fileName');
+        const titleEl = document.getElementById('dropzoneTitle');
+        const subEl = document.getElementById('dropzoneSub');
+
+        function updateFileName() {
+            if (fileInput.files && fileInput.files.length) {
+                fileNameEl.textContent = fileInput.files[0].name;
+                titleEl.textContent = 'Resume ready';
+                subEl.textContent = 'Click to choose a different file';
+                dropzone.classList.add('has-file');
+            } else {
+                fileNameEl.textContent = '';
+                titleEl.textContent = 'Drag & drop your resume here';
+                subEl.textContent = 'or click to browse · PDF only';
+                dropzone.classList.remove('has-file');
+            }
+        }
+
+        fileInput.addEventListener('change', updateFileName);
+
+        ['dragover', 'dragenter'].forEach(evt => dropzone.addEventListener(evt, (e) => {
+            e.preventDefault();
+            dropzone.classList.add('is-dragover');
+        }));
+
+        ['dragleave', 'dragend'].forEach(evt => dropzone.addEventListener(evt, () => {
+            dropzone.classList.remove('is-dragover');
+        }));
+
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('is-dragover');
+            if (e.dataTransfer.files.length) {
+                fileInput.files = e.dataTransfer.files;
+                updateFileName();
+            }
+        });
+    </script>
 
 </body>
+
 </html>
