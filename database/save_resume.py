@@ -9,7 +9,7 @@ load_dotenv()
 
 
 def get_connection():
-    password = os.getenv("MYSQL_PASSWORD", "Naveen@123").strip()
+    password = os.getenv("MYSQL_PASSWORD", "MYSQL_PASSWORD").strip()
     if not password or password == "replace_with_your_mysql_password":
         raise RuntimeError(
             "MYSQL_PASSWORD is not configured. Set your MySQL password in .env."
@@ -19,7 +19,7 @@ def get_connection():
         host=os.getenv("MYSQL_HOST", "localhost"),
         port=int(os.getenv("MYSQL_PORT", "3306")),
         user=os.getenv("MYSQL_USER", "root"),
-        password=password,
+        password=os.get.env("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE", "resume_analyzer"),
     )
 
