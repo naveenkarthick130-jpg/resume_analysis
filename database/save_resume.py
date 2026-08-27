@@ -26,6 +26,7 @@ def get_connection():
 
 def save_resume(
     name,
+    email,
     phone,
     skills,
     education,
