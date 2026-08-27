@@ -19,14 +19,13 @@ def get_connection():
         host=os.getenv("MYSQL_HOST", "localhost"),
         port=int(os.getenv("MYSQL_PORT", "3306")),
         user=os.getenv("MYSQL_USER", "root"),
-        password=os.get.env("MYSQL_PASSWORD"),
+        password=os.getenv("MYSQL_PASSWORD"),
         database=os.getenv("MYSQL_DATABASE", "resume_analyzer"),
     )
 
 
 def save_resume(
     name,
-    email,
     phone,
     skills,
     education,
