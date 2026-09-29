@@ -58,6 +58,7 @@ def analyze_skill_gap(resume_skills):
     ]
 
     results = []
+    
 
     for job, required_skills in JOB_SKILLS.items():
 

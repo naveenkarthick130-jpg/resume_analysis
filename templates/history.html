@@ -61,6 +61,15 @@
     </header>
 
     <main class="page">
+        {% if error %}
+        <section class="empty">
+            <div class="empty-icon">!</div>
+            <h2>History is unavailable</h2>
+            <p>{{ error }}</p>
+            <a class="primary-button" href="/">Analyze a resume&nbsp; →</a>
+        </section>
+        <p class="footer">AI Resume Analyzer · Your career progress, all in one place.</p>
+        {% else %}
         <section class="hero">
             <div><div class="eyebrow">Your workspace</div><h1>Resume history</h1><p>Track every analysis and keep improving your next application.</p></div>
             <a class="primary-button" href="/">Upload new resume <span>→</span></a>
@@ -90,6 +99,7 @@
             <section class="empty"><div class="empty-icon">▣</div><h2>Your history is empty</h2><p>Upload your first resume to get an AI-powered score, ATS check, skill gap analysis, and job recommendations.</p><a class="primary-button" href="/">Analyze my first resume&nbsp; →</a></section>
         {% endif %}
         <p class="footer">AI Resume Analyzer · Your career progress, all in one place.</p>
+        {% endif %}
     </main>
     <script>
         const search = document.getElementById('resumeSearch');

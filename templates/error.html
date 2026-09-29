@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} | AI Resume Analyzer</title>
+    <style>
+        :root { --ink:#172033; --muted:#69758b; --line:#e6eaf2; --primary:#635bff; }
+        * { box-sizing:border-box; }
+        body { margin:0; min-height:100vh; display:grid; place-items:center; padding:40px 20px; color:var(--ink); background:#f4f6fb; font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+        .card { width:min(620px,100%); padding:38px; background:#fff; border:1px solid var(--line); border-radius:22px; box-shadow:0 18px 55px rgba(31,42,73,.09); }
+        .mark { width:52px; height:52px; display:grid; place-items:center; margin-bottom:20px; border-radius:15px; background:#fdebe9; color:#d8412f; font-size:24px; }
+        h1 { margin:0 0 10px; font-size:26px; letter-spacing:-.035em; }
+        p { margin:0; color:var(--muted); font-size:15px; line-height:1.6; word-break:break-word; }
+        .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
+        .actions a { padding:12px 18px; border-radius:12px; font-size:14px; font-weight:700; text-decoration:none; }
+        .primary { color:#fff; background:var(--primary); }
+        .secondary { color:var(--ink); background:#f1f3f9; }
+    </style>
+</head>
+<body>
+    <main class="card">
+        <div class="mark">!</div>
+        <h1>{{ title }}</h1>
+        <p>{{ message }}</p>
+        <div class="actions">
+            <a class="primary" href="/">Analyze a resume</a>
+            <a class="secondary" href="/history">View history</a>
+        </div>
+    </main>
+</body>
+</html>

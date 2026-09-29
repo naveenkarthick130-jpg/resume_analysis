@@ -243,7 +243,10 @@
 
         /* ---- CTA ---- */
         .cta-row {
-            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
             margin-top: 30px;
         }
 
@@ -319,7 +322,7 @@
                 {% if matched_skills %}
                     <ul class="skill-list">
                         {% for skill in matched_skills %}
-                            <li class="skill-row" style="--i: {{ forloop.counter0 }}">
+                            <li class="skill-row" style="--i: {{ loop.index0 }}">
                                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
                                     <path d="M2 6.5L4.5 9L10 3" stroke="#16A34A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
@@ -346,7 +349,7 @@
                 {% if missing_skills %}
                     <ul class="skill-list">
                         {% for skill in missing_skills %}
-                            <li class="skill-row" style="--i: {{ forloop.counter0 }}">
+                            <li class="skill-row" style="--i: {{ loop.index0 }}">
                                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
                                     <path d="M2.5 2.5L9.5 9.5M9.5 2.5L2.5 9.5" stroke="#D8412F" stroke-width="1.8" stroke-linecap="round"/>
                                 </svg>
@@ -362,6 +365,7 @@
         </div>
 
         <div class="cta-row">
+            {% if resume_id %}<a class="cta" href="/resume/{{ resume_id }}">← Back to full report</a>{% endif %}
             <a class="cta" href="/">
                 Upload Another Resume
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -373,7 +377,7 @@
     </div>
 
     <script>
-        // Django renders match_percentage server-side; parse it safely for the animation.
+        // Flask renders match_percentage server-side; parse it safely for the animation.
         const matchPercentage = Math.max(0, Math.min(100, parseFloat("{{ match_percentage }}") || 0));
 
         const circumference = 439.8; // 2 * PI * r(70)

@@ -1,3 +1,6 @@
+import re
+
+from analysis.skill_gap import JOB_SKILLS
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -36,40 +39,83 @@ JOB_DESCRIPTIONS = {
 }
 
 
-def analyze_jobs(resume_text):
+def slugify_role(role):
+    """Turn a job title into a URL-safe slug."""
+    return re.sub(r"[^a-z0-9]+", "-", role.lower()).strip("-")
+
+
+def _match_skills(resume_skills, required_skills):
+    resume_skills_lower = [
+        skill.lower().strip()
+        for skill in resume_skills
+    ]
+
+    matched = []
+    missing = []
+
+    for skill in required_skills:
+        if skill.lower() in resume_skills_lower:
+            matched.append(skill)
+        else:
+            missing.append(skill)
+
+    if required_skills:
+        skill_percentage = round(
+            (len(matched) / len(required_skills)) * 100
+        )
+    else:
+        skill_percentage = 0
+
+    return matched, missing, skill_percentage
+
+
+def _text_similarity(resume_text, job_description):
+    documents = [resume_text or "", job_description]
+
+    if not documents[0].strip():
+        return 0
+
+    vectorizer = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = vectorizer.fit_transform(documents)
+    similarity = cosine_similarity(
+        tfidf_matrix[0:1],
+        tfidf_matrix[1:2]
+    )[0][0]
+
+    return round(float(similarity) * 100)
+
+
+def analyze_jobs(resume_text, resume_skills=None):
+    """Score each role with skill overlap and resume-text similarity."""
+    if resume_skills is None:
+        resume_skills = []
 
     results = []
 
     for job_role, job_description in JOB_DESCRIPTIONS.items():
-
-        documents = [
-            resume_text,
-            job_description
-        ]
-
-        vectorizer = TfidfVectorizer(
-            stop_words="english"
+        required_skills = JOB_SKILLS.get(job_role, [])
+        matched, missing, skill_percentage = _match_skills(
+            resume_skills,
+            required_skills
         )
-
-        tfidf_matrix = vectorizer.fit_transform(
-            documents
+        text_percentage = _text_similarity(resume_text, job_description)
+        match_percentage = round(
+            (skill_percentage * 0.7) + (text_percentage * 0.3)
         )
-
-        similarity = cosine_similarity(
-            tfidf_matrix[0:1],
-            tfidf_matrix[1:2]
-        )[0][0]
-
-        percentage = round(similarity * 100)
 
         results.append({
             "job_role": job_role,
-            "match_percentage": percentage,
-            "job_description": job_description
+            "slug": slugify_role(job_role),
+            "match_percentage": match_percentage,
+            "skill_percentage": skill_percentage,
+            "text_percentage": text_percentage,
+            "matched_skills": matched,
+            "missing_skills": missing,
+            "job_description": job_description.strip()
         })
 
     results.sort(
-        key=lambda x: x["match_percentage"],
+        key=lambda item: item["match_percentage"],
         reverse=True
     )
 

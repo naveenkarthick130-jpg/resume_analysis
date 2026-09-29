@@ -26,12 +26,15 @@ def extract_email(text):
 
 
 def extract_phone(text):
-    pattern = r"(?:\+91[\s-]?)?[6-9]\d{9}"
+    patterns = [
+        r"(?:\+91[\s-]?)?[6-9]\d{9}",
+        r"(?:\+\d{1,3}[\s-]?)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}",
+    ]
 
-    result = re.search(pattern, text)
-
-    if result:
-        return result.group()
+    for pattern in patterns:
+        result = re.search(pattern, text)
+        if result:
+            return result.group()
 
     return "Not found"
 
@@ -46,6 +49,13 @@ def extract_skills(text):
         "CSS",
         "SQL",
         "MySQL",
+        "Excel",
+        "Pandas",
+        "NumPy",
+        "Scikit-learn",
+        "TensorFlow",
+        "Spring",
+        "Bootstrap",
         "Django",
         "Flask",
         "React",
@@ -84,8 +94,12 @@ def extract_education(text):
         "M.E",
         "M.Sc",
         "MBA",
+        "BCA",
+        "MCA",
         "Bachelor",
-        "Master"
+        "Master",
+        "Ph.D",
+        "Diploma"
     ]
 
     found = []
@@ -104,7 +118,8 @@ def extract_experience(text):
         "internship",
         "intern",
         "developer",
-        "engineer"
+        "engineer",
+        "analyst"
     ]
 
     found = []

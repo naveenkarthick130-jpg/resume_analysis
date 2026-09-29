@@ -11,12 +11,14 @@ def check_ats(resume_text, skills, education, experience, projects):
         checks.append({
             "name": "Skills Section",
             "status": "Good",
+            "passed": True,
             "message": "Skills were detected."
         })
     else:
         checks.append({
             "name": "Skills Section",
             "status": "Missing",
+            "passed": False,
             "message": "Add a clear skills section."
         })
 
@@ -26,12 +28,14 @@ def check_ats(resume_text, skills, education, experience, projects):
         checks.append({
             "name": "Education",
             "status": "Good",
+            "passed": True,
             "message": "Education details were detected."
         })
     else:
         checks.append({
             "name": "Education",
             "status": "Missing",
+            "passed": False,
             "message": "Add education details."
         })
 
@@ -41,12 +45,14 @@ def check_ats(resume_text, skills, education, experience, projects):
         checks.append({
             "name": "Experience",
             "status": "Good",
+            "passed": True,
             "message": "Experience details were detected."
         })
     else:
         checks.append({
             "name": "Experience",
             "status": "Missing",
+            "passed": False,
             "message": "Add internship or work experience."
         })
 
@@ -56,12 +62,14 @@ def check_ats(resume_text, skills, education, experience, projects):
         checks.append({
             "name": "Projects",
             "status": "Good",
+            "passed": True,
             "message": "Projects were detected."
         })
     else:
         checks.append({
             "name": "Projects",
             "status": "Missing",
+            "passed": False,
             "message": "Add technical projects."
         })
 

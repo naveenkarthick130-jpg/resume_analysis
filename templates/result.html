@@ -78,6 +78,10 @@
         textarea { display:block; width:100%; min-height:220px; padding:15px; resize:vertical; color:#536075; background:var(--soft); border:1px solid var(--line); border-radius:13px; font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace; }
         .empty { color:var(--muted); font-size:14px; margin:0; }
         .footer { text-align:center; color:var(--muted); font-size:13px; margin-top:28px; }
+        .alert { padding:15px 18px; margin-bottom:18px; border-left:4px solid #d8412f; background:#fdebe9; color:#8f2d20; border-radius:0 13px 13px 0; font-size:14px; line-height:1.55; }
+        .saved-note { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; margin-bottom:18px; border-radius:999px; background:#e7f7ec; color:#0f6b30; font-size:13px; font-weight:650; }
+        .job-link { display:inline-flex; align-items:center; gap:6px; margin-top:12px; color:var(--primary); font-size:13px; font-weight:700; text-decoration:none; }
+        .job-link:hover { text-decoration:underline; }
         @media (max-width:760px) { .topbar { align-items:flex-start; flex-direction:column; } .hero-grid,.content-grid { grid-template-columns:1fr; } .wide { grid-column:auto; } .page { width:min(100% - 24px,600px); margin-top:26px; } .card { padding:20px; border-radius:17px; } }
         @media print { .topbar { background:#222; } .top-actions,.footer { display:none; } .page { width:100%; margin:20px; } .card { box-shadow:none; break-inside:avoid; } }
     </style>
@@ -97,6 +101,8 @@
             <div class="eyebrow">Your analysis is ready</div>
             <h1>Resume performance report</h1>
             <p>A clear snapshot of your strengths, opportunities, and best-fit career paths.</p>
+            {% if save_error %}<div class="alert">⚠️ <b>This report is ready, but it could not be saved to MySQL</b>, so it will not appear in your history. {{ save_error }}</div>{% endif %}
+            {% if resume_id %}<span class="saved-note">✓ Saved to your history as report #{{ resume_id }}</span>{% endif %}
         </section>
 
         <section class="hero-grid">
@@ -139,13 +145,13 @@
             <article class="card">
                 <div class="section-title"><span class="icon">✓</span><h2>ATS compatibility</h2></div>
                 <div class="ats-score">{{ ats_result.score }}<small>/100</small></div>
-                <div class="check-list">{% for check in ats_result.checks %}<div class="check"><span class="check-icon">{% if check.status %}✓{% else %}•{% endif %}</span><div><strong>{{ check.name }}</strong><p>{{ check.message }}</p></div></div>{% endfor %}</div>
+                <div class="check-list">{% for check in ats_result.checks %}<div class="check"><span class="check-icon">{% if check.passed %}✓{% else %}•{% endif %}</span><div><strong>{{ check.name }}</strong><p>{{ check.message }}</p></div></div>{% endfor %}</div>
                 {% if ats_result.found_keywords %}<div class="label">Keywords found</div><div class="chips">{% for keyword in ats_result.found_keywords %}<span class="chip good">{{ keyword }}</span>{% endfor %}</div>{% endif %}
             </article>
 
             <article class="card wide">
                 <div class="section-title"><span class="icon">⌁</span><h2>Recommended career paths</h2></div>
-                {% if job_results %}{% for job in job_results %}<div class="job"><div class="job-head"><div><h3>{{ job.job_role }}</h3><p class="job-label">Based on your current skills</p></div><div class="match">{{ job.match_percentage }}%</div></div><div class="label">Matched skills</div><div class="chips">{% for skill in job.matched_skills %}<span class="chip good">✓ {{ skill }}</span>{% endfor %}</div>{% if job.missing_skills %}<div class="label">Skills to strengthen</div><div class="chips">{% for skill in job.missing_skills %}<span class="chip missing">＋ {{ skill }}</span>{% endfor %}</div>{% endif %}</div>{% endfor %}{% else %}<p class="empty">No job recommendations available.</p>{% endif %}
+                {% if job_results %}{% for job in job_results %}<div class="job"><div class="job-head"><div><h3>{{ job.job_role }}</h3><p class="job-label">Based on your current skills</p></div><div class="match">{{ job.match_percentage }}%</div></div>{% if resume_id %}<a class="job-link" href="/resume/{{ resume_id }}/job/{{ job.slug }}">See the detailed match →</a>{% endif %}<div class="label">Matched skills</div><div class="chips">{% for skill in job.matched_skills %}<span class="chip good">✓ {{ skill }}</span>{% endfor %}</div>{% if job.missing_skills %}<div class="label">Skills to strengthen</div><div class="chips">{% for skill in job.missing_skills %}<span class="chip missing">＋ {{ skill }}</span>{% endfor %}</div>{% endif %}</div>{% endfor %}{% else %}<p class="empty">No job recommendations available.</p>{% endif %}
             </article>
 
             <article class="card">
